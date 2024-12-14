@@ -1,14 +1,14 @@
 <div class="container">
     <div>
      
-        <h1 class="text-xl font-bold mb-4">Manage Subcategories</h1>
+        <h1 class="text-xl font-bold mb-4">Подкатегории</h1>
 
         @if (Auth::check() && Auth::user()->isAdmin())
-            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
-                <input type="text" wire:model="name" placeholder="Enter subcategory name" class="border rounded px-2 py-1">
+            <form wire:submit.prevent="{{ $editId ? 'обновить' : 'создать' }}" class="mb-4">
+                <input type="text" wire:model="name" placeholder="Введите название подкатегории" class="border rounded px-2 py-1">
                 @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
-                <h3 class="mt-2">Select Categories</h3>
+                <h3 class="mt-2">Выберите категории</h3>
                 @foreach ($categories as $category)
                     <label class="inline-block mr-4">
                         <input type="checkbox" wire:model="categoryIds" value="{{ $category->id }}">
@@ -26,10 +26,10 @@
             <thead>
                 <tr>
                     <th class="border border-gray-300 px-2 py-1">ID</th>
-                    <th class="border border-gray-300 px-2 py-1">Name</th>
-                    <th class="border border-gray-300 px-2 py-1">Categories</th>
+                    <th class="border border-gray-300 px-2 py-1">Название</th>
+                    <th class="border border-gray-300 px-2 py-1">Категории</th>
                     @if (Auth::check() && Auth::user()->isAdmin())
-                        <th class="border border-gray-300 px-2 py-1">Actions</th>
+                        <th class="border border-gray-300 px-2 py-1">Действия</th>
                     @endif
                 </tr>
             </thead>

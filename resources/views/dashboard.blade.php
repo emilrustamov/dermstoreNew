@@ -4,55 +4,73 @@
     <div class="menu">
         <div class="container" style="display: flex; gap:20px">
             <div class="menu-item">
-                BRANDS
+                БРЕНДЫ
                 <div class="dropdown">
                     <!-- Буквы алфавита -->
                     <div class="alphabet">
-                        @foreach (range('A', 'Z') as $letter)
-                            <div class="alphabet-item">
-                                <span class="alphabet-letter">{{ $letter }}</span>
-                                @php
-                                    $brands = \App\Models\Brand::where('name', 'like', "$letter%")->get();
-                                @endphp
-                                @if ($brands->count())
-                                    {{-- <div class="brand-list"> --}}
-                                    <ul>
+                        <div class="alphabet-letters">
+                            @foreach (range('A', 'Z') as $letter)
+                                <span class="alphabet-letter" data-letter="{{ $letter }}">{{ $letter }}</span>
+                            @endforeach
+                            <span class="alphabet-letter" data-letter="0-9">0-9</span>
+                        </div>
+
+                        <!-- Блок для отображения брендов -->
+                        <div class="brands-display" id="brands-display">
+                            @php
+                                $initialBrands = \App\Models\Brand::where('name', 'like', 'A%')->get();
+                            @endphp
+
+                            @if ($initialBrands->count())
+                                @foreach ($initialBrands as $brand)
+                                    <a href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
+                                @endforeach
+                            @else
+                                <p>Бренды пока не добавлены</p>
+                            @endif
+                        </div>
+
+                        <!-- Скрытые данные для всех брендов -->
+                        <div id="all-brands" style="display: none;">
+                            @foreach (range('A', 'Z') as $letter)
+                                <div class="brands-group" data-letter="{{ $letter }}">
+                                    @php
+                                        $brands = \App\Models\Brand::where('name', 'like', "$letter%")->get();
+                                    @endphp
+                                    @if ($brands->count())
                                         @foreach ($brands as $brand)
-                                            <li><a
-                                                    href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
-                                            </li>
+                                            <a href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
                                         @endforeach
-                                    </ul>
-                                    {{-- </div> --}}
+                                    @else
+                                        <p>Бренды пока не добавлены</p>
+                                    @endif
+                                </div>
+                            @endforeach
+
+                            <div class="brands-group" data-letter="0-9">
+                                @php
+                                    $numericBrands = \App\Models\Brand::whereRaw('name REGEXP "^[0-9]"')->get();
+                                @endphp
+                                @if ($numericBrands->count())
+                                    @foreach ($numericBrands as $brand)
+                                        <a href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
+                                    @endforeach
+                                @else
+                                    <p>Бренды пока не добавлены</p>
                                 @endif
                             </div>
-                        @endforeach
-                        <!-- Для цифр 0-9 -->
-                        <div class="alphabet-item">
-                            <span class="alphabet-letter">0-9</span>
-                            @php
-                                $brands = \App\Models\Brand::whereRaw('name REGEXP "^[0-9]"')->get();
-                            @endphp
-                            @if ($brands->count())
-                                {{-- <div class="brand-list"> --}}
-                                <ul>
-                                    @foreach ($brands as $brand)
-                                        <li><a href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                                {{-- </div> --}}
-                            @endif
                         </div>
                     </div>
                 </div>
             </div>
+
+
             @php
                 // Получаем список всех секций
                 $sections = \App\Models\Section::all();
             @endphp
             @foreach ($sections as $section)
-                <div class="menu-item">
+                <div class="menu-item uppercase">
                     <a href="{{ route('dashboard.bySection', $section->id) }}">{{ $section->name }}</a>
 
 
@@ -65,9 +83,9 @@
                                 <div class="dropdown-column">
                                     <h4><a
                                             href="{{ route('dashboard.byCategory', $category->id) }}">{{ $category->name }}</a>
-                                            <hr>
+                                        <hr>
                                     </h4>
-                                
+
                                     @php
                                         $subcategories = $category->subcategories();
                                     @endphp
@@ -87,15 +105,9 @@
                     @endif
                 </div>
             @endforeach
-
         </div>
     </div>
     <div class="container">
-
-
-
-
-
         @php
             $productsQuery = \App\Models\Product::query();
 
@@ -121,20 +133,22 @@
 
 
         <div class="product-container my-4">
-            <h1 class="mb-4">Товары</h1>
+            <h1 class="mb-4 text-xl font-bold mb-4">Товары</h1>
             @if ($products->count())
                 <div class="product-grid">
                     @foreach ($products as $product)
                         <div class="product-card">
                             <div class="product-info">
-                                <h3><a href="{{ route('dashboard.product.details', $product->id) }}">{{ $product->name }}</a></h3>
+                                <h3><a
+                                        href="{{ route('dashboard.product.details', $product->id) }}">{{ $product->name }}</a>
+                                </h3>
                                 <p>{{ $product->description }}</p>
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <p>No products found for the selected filter.</p>
+                <p>Товаров пока не добавлено</p>
             @endif
         </div>
 
@@ -151,7 +165,6 @@
 
         .menu-item {
             position: relative;
-      
             cursor: pointer;
             font-weight: bold;
         }
@@ -202,6 +215,7 @@
             color: #444;
             text-decoration: none;
             font-size: 14px;
+            font-weight: 600;
         }
 
         .dropdown-column ul li a:hover {
@@ -212,38 +226,74 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
-        }
-
-        .alphabet-item {
-            position: relative;
+            flex-direction: column;
+            align-items: start;
         }
 
         .alphabet-letter {
-            font-size: 14px;
-            font-weight: bold;
             cursor: pointer;
-            color: #333;
+            font-weight: bold;
+            padding: 5px 10px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .alphabet-letter {
+            cursor: pointer;
+            font-weight: bold;
+
+            display: inline-flex;
+            text-align: center;
         }
 
         .alphabet-letter:hover {
             color: #000;
         }
 
+        .brands-display {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .brands-display a {
+            text-decoration: none;
+            color: black;
+            border-radius: 4px;
+        }
+
+        .brands-display a:hover {
+            text-decoration: underline;
+        }
+
+        #all-brands {
+            display: none;
+        }
+
         .brand-list {
+            display: none;
+            /* Скрываем бренды по умолчанию */
             position: absolute;
             top: 100%;
+            /* Располагаем бренды под буквой */
             left: 0;
-            background-color: #fff;
-            color: #000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: none;
-            z-index: 1000;
-            padding: 10px;
             white-space: nowrap;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            padding: 10px;
         }
 
         .alphabet-item:hover .brand-list {
             display: block;
+        }
+
+        .alphabet-letters {
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid #ccc;
         }
 
         .brand-list ul {
@@ -310,4 +360,30 @@
             color: #666;
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const letters = document.querySelectorAll('.alphabet-letter');
+            const brandsDisplay = document.getElementById('brands-display');
+            const allBrands = document.getElementById('all-brands');
+
+            letters.forEach(letter => {
+                letter.addEventListener('mouseover', () => {
+                    const selectedLetter = letter.getAttribute('data-letter');
+
+                    // Найти соответствующую группу брендов
+                    const group = allBrands.querySelector(
+                        `.brands-group[data-letter="${selectedLetter}"]`);
+
+                    // Очистить текущий список брендов
+                    brandsDisplay.innerHTML = '';
+
+                    // Добавить бренды из выбранной группы
+                    if (group) {
+                        brandsDisplay.innerHTML = group.innerHTML;
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

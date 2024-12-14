@@ -83,7 +83,7 @@
                 <div class="footer-menu">
                     <ul>
                         <li><a href="{{ route('dashboard') }}">Главная</a></li>
-                        <li><a href="{{ route('sections') }}">Секции</a></li>
+                        <li><a href="{{ route('sections') }}">Разделы</a></li>
                         <li><a href="{{ route('brands') }}">Бренды</a></li>
                         <li><a href="{{ route('categories') }}">Категории</a></li>
                         <li><a href="{{ route('subcategories') }}">Подкатегории</a></li>

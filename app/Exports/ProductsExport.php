@@ -60,7 +60,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
     private function getNames($model, $ids): string
     {
         if (is_array($ids)) {
-            return implode(', ', $model::whereIn('id', $ids)->pluck('name')->toArray());
+            return implode('; ', $model::whereIn('id', $ids)->pluck('name')->toArray());
         }
         return '';
     }
@@ -70,17 +70,29 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
      */
     private function formatFilters($filters): string
     {
-        if (!is_array($filters)) {
+        // Если фильтры не являются массивом или пустой строкой, вернем пустую строку
+        if (empty($filters) || !is_string($filters)) {
+            return '';
+        }
+
+        // Попробуем декодировать фильтры из строки
+        $decodedFilters = json_decode($filters, true);
+
+        // Если декодирование прошло неудачно (например, нет фильтров), возвращаем пустую строку
+        if (!is_array($decodedFilters)) {
             return '';
         }
 
         $formattedFilters = [];
-        foreach ($filters as $filterId => $filterValue) {
+        foreach ($decodedFilters as $filterId => $filterValues) {
+            // Получаем название фильтра по его ID
             $filterName = Filter::where('id', $filterId)->value('name');
-            if ($filterName) {
-                $formattedFilters[] = "{$filterName}: {$filterValue}";
+            if ($filterName && is_array($filterValues)) {
+                // Преобразуем значения фильтра в строку
+                $formattedFilters[] = $filterName . ': ' . implode(', ', $filterValues);
             }
         }
+        // Возвращаем все фильтры в виде строки, разделенной точкой с запятой
         return implode('; ', $formattedFilters);
     }
 }

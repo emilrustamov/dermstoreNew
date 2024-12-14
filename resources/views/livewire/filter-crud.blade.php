@@ -1,13 +1,13 @@
 <div class="container">
     <div>
-        <h1 class="text-xl font-bold mb-4">Manage Filters</h1>
+        <h1 class="text-xl font-bold mb-4">Фильтры</h1>
 
         @if (Auth::check() && Auth::user()->isAdmin())
-            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
-                <input type="text" wire:model="name" placeholder="Enter filter name" class="border rounded px-2 py-1">
+            <form wire:submit.prevent="{{ $editId ? 'обновить' : 'создать' }}" class="mb-4">
+                <input type="text" wire:model="name" placeholder="Введите название фильтра" class="border rounded px-2 py-1">
                 @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
-                <textarea wire:model="values" placeholder="Enter values, comma-separated" class="border rounded px-2 py-1 w-full"></textarea>
+                <textarea wire:model="values" placeholder="Вносите значения через ЗАПЯТУЮ" class="border rounded px-2 py-1 w-full"></textarea>
                 @error('values') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
                 <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
@@ -20,10 +20,10 @@
             <thead>
                 <tr>
                     <th class="border border-gray-300 px-2 py-1">ID</th>
-                    <th class="border border-gray-300 px-2 py-1">Name</th>
-                    <th class="border border-gray-300 px-2 py-1">Values</th>
+                    <th class="border border-gray-300 px-2 py-1">Название</th>
+                    <th class="border border-gray-300 px-2 py-1">Значения</th>
                     @if (Auth::check() && Auth::user()->isAdmin())
-                        <th class="border border-gray-300 px-2 py-1">Actions</th>
+                        <th class="border border-gray-300 px-2 py-1">Действия</th>
                     @endif
                 </tr>
             </thead>
