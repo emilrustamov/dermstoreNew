@@ -19,6 +19,7 @@ class Product extends Model
         'subcategories',
         'brands',
         'filters',
+        'image',
     ];
 
     // Преобразование полей из строки в массив и обратно

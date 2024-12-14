@@ -9,16 +9,20 @@ use App\Models\Product;
 use App\Models\Section;
 use App\Models\Subcategory;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+
 
 class ProductCrud extends Component
 {
+    use WithFileUploads;
     public $products;
     public $sections;
     public $categories;
     public $subcategories;
     public $brands;
     public $filters;
-
+    public $image;
+    public $currentImage; 
     public $name;
     public $description;
     public $sectionIds = [];
@@ -29,7 +33,7 @@ class ProductCrud extends Component
     public $editId;
     public $filterValues = [];
 
-    public function mount($category = null, $subcategory = null, $brand = null)
+    public function mount( $category = null, $subcategory = null, $brand = null)
     {
         // Инициализация данных для создания товара
         $this->products = Product::all();
@@ -59,7 +63,10 @@ class ProductCrud extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'image' => 'nullable|image|max:1024',
         ]);
+
+        $imagePath = $this->image ? $this->image->store('products', 'public') : null;
 
         // Преобразуем фильтры в формат: ["filter_id": ["value1", "value2"]]
         $formattedFilters = [];
@@ -74,7 +81,8 @@ class ProductCrud extends Component
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
             'brands' => $this->brandIds,
-            'filters' => json_encode($formattedFilters), // Сохраняем в JSON формате
+            'filters' => json_encode($formattedFilters), 
+            'image' => $imagePath, 
         ]);
 
         $this->resetForm();
@@ -92,7 +100,7 @@ class ProductCrud extends Component
         $this->categoryIds = is_array($product->categories) ? $product->categories : json_decode($product->categories, true);
         $this->subcategoryIds = is_array($product->subcategories) ? $product->subcategories : json_decode($product->subcategories, true);
         $this->brandIds = is_array($product->brands) ? $product->brands : json_decode($product->brands, true);
-
+        $this->currentImage = $product->image; 
         // Разбираем фильтры
         $filters = is_array($product->filters) ? $product->filters : json_decode($product->filters, true);
         if (!is_array($filters)) {
@@ -113,11 +121,15 @@ class ProductCrud extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'image' => 'nullable|image|max:1024',
         ]);
 
         $product = Product::findOrFail($this->editId);
 
-        // Преобразуем фильтры в формат: ["filter_id": ["value1", "value2"]]
+        $imagePath = $this->image ? $this->image->store('products', 'public') : $this->currentImage;
+    
+       
+
         $formattedFilters = [];
         foreach ($this->filterValues as $filterId => $values) {
             $formattedFilters[$filterId] = array_keys(array_filter($values));
@@ -130,7 +142,8 @@ class ProductCrud extends Component
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
             'brands' => $this->brandIds,
-            'filters' => json_encode($formattedFilters), // Сохраняем в JSON формате
+            'filters' => json_encode($formattedFilters),
+            'image' => $imagePath,
         ]);
 
         $this->resetForm();
@@ -152,6 +165,8 @@ class ProductCrud extends Component
         $this->subcategoryIds = [];
         $this->brandIds = [];
         $this->filterValues = [];
+        $this->image = null;
+        $this->currentImage = null;
         $this->editId = null;
     }
 

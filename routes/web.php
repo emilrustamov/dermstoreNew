@@ -10,12 +10,9 @@ use App\Livewire\FilterCrud;
 use App\Livewire\ProductCrud;
 use App\Exports\ProductsExport;
 use Maatwebsite\Excel\Facades\Excel;
-
-
+use Illuminate\Support\Facades\Storage;
 
 Auth::routes();
-
-
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
@@ -49,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/dashboard/product/{id}/update', function (\Illuminate\Http\Request $request, $id) {
         $product = \App\Models\Product::findOrFail($id);
-    
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -58,15 +55,29 @@ Route::middleware(['auth'])->group(function () {
             'subcategories' => 'nullable|array',
             'brands' => 'nullable|array',
             'filters' => 'nullable|array',
+            'image' => 'nullable|image|max:1024',
         ]);
-    
+
         // Обработка фильтров
         $filters = $validatedData['filters'] ?? [];
         $formattedFilters = [];
         foreach ($filters as $filterId => $values) {
             $formattedFilters[$filterId] = array_values($values); // Сохраняем только выбранные значения
         }
-    
+
+        // Обработка изображения
+        if ($request->hasFile('image')) {
+            // Удаляем старое изображение, если оно существует
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            // Сохраняем новое изображение
+            $validatedData['image'] = $request->file('image')->store('products', 'public');
+        } else {
+            $validatedData['image'] = $product->image; // Сохраняем старое изображение, если новое не загружено
+        }
+
         // Обновление товара
         $product->update([
             'name' => $validatedData['name'],
@@ -75,16 +86,15 @@ Route::middleware(['auth'])->group(function () {
             'categories' => $validatedData['categories'] ?? [],
             'subcategories' => $validatedData['subcategories'] ?? [],
             'brands' => $validatedData['brands'] ?? [],
-            'filters' => json_encode($formattedFilters), // Преобразуем в JSON перед сохранением
+            'filters' => json_encode($formattedFilters),
+            'image' => $validatedData['image'],
         ]);
-    
+
         return redirect()->route('dashboard.product.details', $product->id)
             ->with('success', 'Product updated successfully!');
     })->name('dashboard.product.update');
-    
 
-
-
+    Route::get('/users', \App\Livewire\UserManagement::class)->name('users');
 
     Route::get('/dashboard/section/{section}', function ($section) {
         return view('dashboard', ['sectionId' => (int)$section]);

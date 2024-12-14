@@ -6,7 +6,7 @@
 
         @if (Auth::check() && Auth::user()->isAdmin())
             <!-- Create / Edit Form -->
-            <form wire:submit.prevent="{{ $editId ? 'обновить' : 'создать' }}" class="mb-4">
+            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
                 <div class="flex mb-2 gap-3 align-items-center">
                     <div class="w-full md:w-1/2 mb-4 md:mb-0">
                         <label for="name" class="flex text-gray-700 font-bold mb-2">Название</label>
@@ -25,6 +25,30 @@
                         @enderror
                     </div>
                 </div>
+
+                <div class="w-full md:w-1/2">
+                    <label for="image" class="flex text-gray-700 font-bold mb-2">Изображение</label>
+                    <input type="file" id="image" wire:model="image" class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 h-full">
+                
+                    @if ($currentImage)
+                        <div class="mt-2">
+                            <p>Текущее изображение:</p>
+                            <img src="{{ asset('storage/' . $currentImage) }}" alt="Изображение товара" style="max-height: 100px;">
+                        </div>
+                    @endif
+                
+                    @if ($image)
+                        <div class="mt-2">
+                            <p>Новое изображение:</p>
+                            <img src="{{ $image->temporaryUrl() }}" alt="Новое изображение" style="max-height: 100px;">
+                        </div>
+                    @endif
+                
+                    @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+                
+                
+
 
                 <h3 class="mt-2">Выберите раздел</h3>
                 @foreach ($sections as $section)
@@ -90,6 +114,7 @@
                     <th class="border border-gray-300 px-2 py-1">ID</th>
                     <th class="border border-gray-300 px-2 py-1">Название</th>
                     <th class="border border-gray-300 px-2 py-1">Описание</th>
+                    <th class="border border-gray-300 px-2 py-1">Изображение</th>
                     @if (Auth::check() && Auth::user()->isAdmin())
                         <th class="border border-gray-300 px-2 py-1">Действия</th>
                     @endif
@@ -101,6 +126,13 @@
                         <td class="border border-gray-300 px-2 py-1">{{ $product->id }}</td>
                         <td class="border border-gray-300 px-2 py-1">{{ $product->name }}</td>
                         <td class="border border-gray-300 px-2 py-1">{{ $product->description }}</td>
+                        <td class="border border-gray-300 px-2 py-1">
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" style="max-height: 50px;">
+                            @else
+                                Нет изображения
+                            @endif
+                        </td>
                         @if (Auth::check() && Auth::user()->isAdmin())
                             <td class="border border-gray-300 px-2 py-1">
                                 <button wire:click="edit({{ $product->id }})"

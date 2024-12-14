@@ -90,6 +90,7 @@
                         <li><a href="{{ route('filters') }}">Фильтры</a></li>
                         <li><a href="{{ route('products') }}">Товары</a></li>
                         <li><a href="{{ route('export.products') }}" class="btn btn-success">Excel</a></li>
+                        <li><a href="{{ route('users') }}">Пользователи</a></li>
                         <li>
                             <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                Выйти

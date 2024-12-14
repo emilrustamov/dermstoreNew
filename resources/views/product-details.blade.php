@@ -15,16 +15,23 @@
             <div>
                 <p><strong>Название:</strong> {{ $product->name }}</p>
                 <p><strong>Описание:</strong> {{ $product->description }}</p>
-                <p><strong>Разделы:</strong> 
+                <p><strong>Изображение:</strong></p>
+                @if ($product->image)
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="Изображение товара"
+                        style="max-width: 200px; height: auto;">
+                @else
+                    <p>Изображение отсутствует</p>
+                @endif
+                <p><strong>Разделы:</strong>
                     {{ implode(', ', \App\Models\Section::whereIn('id', $product->sections ?? [])->pluck('name')->toArray()) }}
                 </p>
-                <p><strong>Категории:</strong> 
+                <p><strong>Категории:</strong>
                     {{ implode(', ', \App\Models\Category::whereIn('id', $product->categories ?? [])->pluck('name')->toArray()) }}
                 </p>
-                <p><strong>Подкатегории:</strong> 
+                <p><strong>Подкатегории:</strong>
                     {{ implode(', ', \App\Models\Subcategory::whereIn('id', $product->subcategories ?? [])->pluck('name')->toArray()) }}
                 </p>
-                <p><strong>Бренды:</strong> 
+                <p><strong>Бренды:</strong>
                     {{ implode(', ', \App\Models\Brand::whereIn('id', $product->brands ?? [])->pluck('name')->toArray()) }}
                 </p>
                 <p><strong>Фильтры:</strong></p>
@@ -41,7 +48,7 @@
             </div>
         @else
             <!-- Форма редактирования -->
-            <form action="{{ route('dashboard.product.update', $product->id) }}" method="POST">
+            <form action="{{ route('dashboard.product.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- Название -->
@@ -54,6 +61,16 @@
                 <div class="form-group">
                     <label for="description">Описание</label>
                     <textarea name="description" id="description" class="form-control" required>{{ $product->description }}</textarea>
+                </div>
+
+                
+                <!-- Изображение -->
+                <div class="form-group">
+                    <label for="image">Изображение</label>
+                    @if ($product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="Изображение товара" style="max-width: 200px; height: auto;" class="mb-2">
+                    @endif
+                    <input type="file" name="image" id="image" class="form-control">
                 </div>
 
                 <!-- Разделы -->

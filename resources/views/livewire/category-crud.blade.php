@@ -5,7 +5,7 @@
 
         @if (Auth::check() && Auth::user()->isAdmin())
             <!-- Форма создания / редактирования -->
-            <form wire:submit.prevent="{{ $editId ? 'обновить' : 'создать' }}" class="mb-4">
+            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
                 <input type="text" wire:model="name" placeholder="Enter category name" class="border rounded px-2 py-1">
                 @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
 
