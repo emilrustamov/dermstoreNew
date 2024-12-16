@@ -77,68 +77,31 @@
 
         <main class="my">
 
-            <div class="menu">
-                <div class="container" style="display: flex;">
-                    <div class="menu-item">
-                        БРЕНДЫ
-                        <div class="dropdown">
-                            <div class="container dropdown-container" style="padding: 0 40px;">
-                                <!-- Буквы алфавита -->
-                                <div class="alphabet">
-                                    <div class="alphabet-letters">
-                                        @foreach (range('A', 'Z') as $letter)
-                                            <span class="alphabet-letter"
-                                                data-letter="{{ $letter }}">{{ $letter }}</span>
-                                        @endforeach
-                                        <span class="alphabet-letter" data-letter="0-9">0-9</span>
-                                    </div>
-
-                                    <!-- Блок для отображения брендов -->
-                                    <div class="brands-display" id="brands-display">
-                                        @php
-                                            $initialBrands = \App\Models\Brand::where('name', 'like', 'A%')->get();
-                                        @endphp
-
-                                        @if ($initialBrands->count())
-                                            @foreach ($initialBrands as $brand)
-                                                <a
-                                                    href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
+            @auth
+                <div class="menu">
+                    <div class="container" style="display: flex;">
+                        <div class="menu-item">
+                            БРЕНДЫ
+                            <div class="dropdown">
+                                <div class="container dropdown-container" style="padding: 0 40px;">
+                                    <!-- Буквы алфавита -->
+                                    <div class="alphabet">
+                                        <div class="alphabet-letters">
+                                            @foreach (range('A', 'Z') as $letter)
+                                                <span class="alphabet-letter"
+                                                    data-letter="{{ $letter }}">{{ $letter }}</span>
                                             @endforeach
-                                        @else
-                                            <p>Бренды пока не добавлены</p>
-                                        @endif
-                                    </div>
+                                            <span class="alphabet-letter" data-letter="0-9">0-9</span>
+                                        </div>
 
-                                    <!-- Скрытые данные для всех брендов -->
-                                    <div id="all-brands" style="display: none;">
-                                        @foreach (range('A', 'Z') as $letter)
-                                            <div class="brands-group" data-letter="{{ $letter }}">
-                                                @php
-                                                    $brands = \App\Models\Brand::where(
-                                                        'name',
-                                                        'like',
-                                                        "$letter%",
-                                                    )->get();
-                                                @endphp
-                                                @if ($brands->count())
-                                                    @foreach ($brands as $brand)
-                                                        <a
-                                                            href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
-                                                    @endforeach
-                                                @else
-                                                    <p>Бренды пока не добавлены</p>
-                                                @endif
-                                            </div>
-                                        @endforeach
-
-                                        <div class="brands-group" data-letter="0-9">
+                                        <!-- Блок для отображения брендов -->
+                                        <div class="brands-display" id="brands-display">
                                             @php
-                                                $numericBrands = \App\Models\Brand::whereRaw(
-                                                    'name REGEXP "^[0-9]"',
-                                                )->get();
+                                                $initialBrands = \App\Models\Brand::where('name', 'like', 'A%')->get();
                                             @endphp
-                                            @if ($numericBrands->count())
-                                                @foreach ($numericBrands as $brand)
+
+                                            @if ($initialBrands->count())
+                                                @foreach ($initialBrands as $brand)
                                                     <a
                                                         href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
                                                 @endforeach
@@ -146,57 +109,94 @@
                                                 <p>Бренды пока не добавлены</p>
                                             @endif
                                         </div>
+
+                                        <!-- Скрытые данные для всех брендов -->
+                                        <div id="all-brands" style="display: none;">
+                                            @foreach (range('A', 'Z') as $letter)
+                                                <div class="brands-group" data-letter="{{ $letter }}">
+                                                    @php
+                                                        $brands = \App\Models\Brand::where(
+                                                            'name',
+                                                            'like',
+                                                            "$letter%",
+                                                        )->get();
+                                                    @endphp
+                                                    @if ($brands->count())
+                                                        @foreach ($brands as $brand)
+                                                            <a
+                                                                href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
+                                                        @endforeach
+                                                    @else
+                                                        <p>Бренды пока не добавлены</p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+
+                                            <div class="brands-group" data-letter="0-9">
+                                                @php
+                                                    $numericBrands = \App\Models\Brand::whereRaw(
+                                                        'name REGEXP "^[0-9]"',
+                                                    )->get();
+                                                @endphp
+                                                @if ($numericBrands->count())
+                                                    @foreach ($numericBrands as $brand)
+                                                        <a
+                                                            href="{{ route('dashboard.byBrand', $brand->id) }}">{{ $brand->name }}</a>
+                                                    @endforeach
+                                                @else
+                                                    <p>Бренды пока не добавлены</p>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                        @php
+                            // Получаем список всех секций
+                            $sections = \App\Models\Section::all();
+                        @endphp
+                        @foreach ($sections as $section)
+                            <div class="menu-item uppercase">
+                                <a href="{{ route('dashboard.bySection', $section->id) }}">{{ $section->name }}</a>
 
-                    @php
-                        // Получаем список всех секций
-                        $sections = \App\Models\Section::all();
-                    @endphp
-                    @foreach ($sections as $section)
-                        <div class="menu-item uppercase">
-                            <a href="{{ route('dashboard.bySection', $section->id) }}">{{ $section->name }}</a>
+                                @php
+                                    $categories = $section->categories();
+                                @endphp
+                                @if ($categories->count())
+                                    <div class="dropdown">
+                                        <div class="container dropdown-container" style="padding: 0 40px;">
+                                            @foreach ($categories as $category)
+                                                <div class="dropdown-column">
+                                                    <h4><a href="{{ route('dashboard.byCategory', $category->id) }}"
+                                                            class="category">{{ $category->name }}</a>
+                                                        <hr class="mt-1 mb-2">
+                                                    </h4>
 
-
-                            @php
-                                $categories = $section->categories();
-                            @endphp
-                            @if ($categories->count())
-                                <div class="dropdown">
-                                    <div class="container dropdown-container" style="padding: 0 40px;">
-                                        @foreach ($categories as $category)
-                                            <div class="dropdown-column">
-                                                <h4><a href="{{ route('dashboard.byCategory', $category->id) }}"
-                                                        class="category">{{ $category->name }}</a>
-                                                    <hr class="mt-1 mb-2">
-                                                </h4>
-
-                                                @php
-                                                    $subcategories = $category->subcategories();
-                                                @endphp
-                                                @if ($subcategories->count())
-                                                    <ul>
-                                                        @foreach ($subcategories as $subcategory)
-                                                            <li>
-                                                                <a href="{{ route('dashboard.bySubcategory', $subcategory->id) }}"
-                                                                    class="subcategory">{{ $subcategory->name }}</a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                @endif
-                                            </div>
-                                        @endforeach
+                                                    @php
+                                                        $subcategories = $category->subcategories();
+                                                    @endphp
+                                                    @if ($subcategories->count())
+                                                        <ul>
+                                                            @foreach ($subcategories as $subcategory)
+                                                                <li>
+                                                                    <a href="{{ route('dashboard.bySubcategory', $subcategory->id) }}"
+                                                                        class="subcategory">{{ $subcategory->name }}</a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
+            @endauth
             @yield('content') <!-- Для Blade -->
             {{ $slot ?? '' }}
             @auth
