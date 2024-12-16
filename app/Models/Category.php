@@ -19,7 +19,7 @@ class Category extends Model
     // Связь с подкатегориями
     public function subcategories()
     {
-        return Subcategory::whereJsonContains('categories', (string) $this->id)->get();
+        return Subcategory::where('categories', 'LIKE', '%"'.(string) $this->id.'"%')->get();
     }
     
 

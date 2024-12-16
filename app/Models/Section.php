@@ -18,7 +18,7 @@ class Section extends Model
     // }
     public function categories()
     {
-        return Category::whereJsonContains('sections', (string) $this->id)->get();
+        return Category::where('sections', 'LIKE', '%"'.(string) $this->id.'"%')->get();
     }
     
 

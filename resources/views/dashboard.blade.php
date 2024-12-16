@@ -7,19 +7,19 @@
             $productsQuery = \App\Models\Product::query();
 
             if (isset($categoryId)) {
-                $productsQuery->whereJsonContains('categories', (string) $categoryId);
+                $productsQuery->where('categories', 'LIKE', '%"'.(string) $categoryId.'"%');
             }
 
             if (isset($subcategoryId)) {
-                $productsQuery->whereJsonContains('subcategories', (string) $subcategoryId);
+                $productsQuery->where('subcategories', 'LIKE', '%"'.(string) $subcategoryId.'"%');
             }
 
             if (isset($brandId)) {
-                $productsQuery->whereJsonContains('brands', (string) $brandId);
+                $productsQuery->where('brands', 'LIKE', '%"'.(string) $brandId.'"%');
             }
 
             if (isset($sectionId)) {
-                $productsQuery->whereJsonContains('sections', (string) $sectionId);
+                $productsQuery->where('sections', 'LIKE', '%"'.(string) $sectionId.'"%');
             }
 
             $products = $productsQuery->get();

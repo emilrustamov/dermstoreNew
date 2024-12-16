@@ -15,17 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name'); // Название товара
             $table->text('description'); // Описание товара
-            $table->json('categories')->nullable(); // Связанные категории
-            $table->json('sections')->nullable(); // Связанные разделы
-            $table->json('subcategories')->nullable(); // Связанные подкатегории
-            $table->json('brands')->nullable(); // Связанные бренды
-            $table->json('filters')->nullable(); // Связанные фильтры
+            $table->text('categories')->nullable(); // Связанные категории
+            $table->text('sections')->nullable(); // Связанные разделы
+            $table->text('subcategories')->nullable(); // Связанные подкатегории
+            $table->text('brands')->nullable(); // Связанные бренды
+            $table->text('filters')->nullable(); // Связанные фильтры
             $table->timestamps();
         });
     }
     
-    
-
     /**
      * Reverse the migrations.
      */
