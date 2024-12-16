@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container my-4">
     <h1 class="mb-4">Пользователи</h1>
 
     @if (session('success'))

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container my-4">
+    <div class="container my-4" style="padding: 0 40px;">
         <h1 text-xl font-bold mb-4>Информация о товаре</h1>
 
         @if (session('success'))

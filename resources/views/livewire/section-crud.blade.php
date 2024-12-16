@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container my-4">
     <div>
       
         <h1 class="text-xl font-bold mb-4">Разделы</h1>
