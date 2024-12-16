@@ -509,6 +509,31 @@ padding: 3px;
             color: #666;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const letters = document.querySelectorAll('.alphabet-letter');
+            const brandsDisplay = document.getElementById('brands-display');
+            const allBrands = document.getElementById('all-brands');
+
+            letters.forEach(letter => {
+                letter.addEventListener('mouseover', () => {
+                    const selectedLetter = letter.getAttribute('data-letter');
+
+                    // Найти соответствующую группу брендов
+                    const group = allBrands.querySelector(
+                        `.brands-group[data-letter="${selectedLetter}"]`);
+
+                    // Очистить текущий список брендов
+                    brandsDisplay.innerHTML = '';
+
+                    // Добавить бренды из выбранной группы
+                    if (group) {
+                        brandsDisplay.innerHTML = group.innerHTML;
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
