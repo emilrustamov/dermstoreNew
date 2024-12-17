@@ -6,7 +6,7 @@
 
         @if (Auth::check() && Auth::user()->isAdmin())
             <!-- Create / Edit Form -->
-            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
+            <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" enctype="multipart/form-data" class="mb-4">
                 <div class="flex mb-2 gap-3 align-items-center">
                     <div class="w-full md:w-1/2 mb-4 md:mb-0">
                         <label for="name" class="flex text-gray-700 font-bold mb-2">Название</label>

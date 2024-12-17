@@ -35,8 +35,15 @@
                     {{ implode(', ',\App\Models\Brand::whereIn('id', $product->brands ?? [])->pluck('name')->toArray()) }}
                 </p>
                 <p><strong>Ranges Бренда:</strong>
-                    {{ implode(', ',\App\Models\Range::whereIn('id', $product->ranges ?? [])->pluck('name')->toArray()) }}
+                    @if (!empty($product->ranges) && is_array($product->ranges))
+                        {{ implode(', ', $product->ranges) }}
+                    @else
+                        <span>Нет данных</span>
+                    @endif
                 </p>
+
+
+
                 <p><strong>Фильтры:</strong></p>
                 @foreach ($product->filters ?? [] as $filterId => $values)
                     <p>
@@ -156,15 +163,16 @@
                     <div class="d-flex flex-wrap gap-2">
                         @foreach (\App\Models\Range::all() as $range)
                             <div class="form-check-inline">
-                                <input type="checkbox" name="ranges[]" value="{{ $range->id }}"
+                                <input type="checkbox" name="ranges[]" value="{{ $range->name }}"
                                     id="range-{{ $range->id }}" class="form-check-input"
-                                    {{ in_array($range->id, $product->ranges ?? []) ? 'checked' : '' }}>
-                                <label for="range-{{ $range->id }}"
-                                    class="form-check-label">{{ $range->name }}</label>
+                                    {{ in_array($range->name, $product->ranges ?? []) ? 'checked' : '' }}>
+                                <label for="range-{{ $range->id }}" class="form-check-label">{{ $range->name }}</label>
                             </div>
                         @endforeach
                     </div>
                 </div>
+                
+                
 
                 <!-- Фильтры -->
                 <div class="form-group">
