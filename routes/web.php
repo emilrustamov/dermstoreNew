@@ -11,6 +11,8 @@ use App\Livewire\ProductCrud;
 use App\Exports\ProductsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use App\Livewire\CharacteristicCrud;
+use App\Livewire\RangeCrud;
 
 Auth::routes();
 
@@ -26,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/subcategories', SubcategoryCrud::class)->name('subcategories');
     Route::get('/filters', FilterCrud::class)->name('filters');
     Route::get('/products', ProductCrud::class)->name('products');
+    Route::get('/ranges', RangeCrud::class)->name('ranges');
+
+    Route::get('/characteristics', CharacteristicCrud::class)->name('characteristics');
 
     // В routes/web.php
     Route::get('/dashboard/category/{category}', function ($category) {
@@ -54,7 +59,9 @@ Route::middleware(['auth'])->group(function () {
             'categories' => 'nullable|array',
             'subcategories' => 'nullable|array',
             'brands' => 'nullable|array',
+            'ranges' => 'nullable|array', // Add this line
             'filters' => 'nullable|array',
+            'characteristics' => 'nullable|array',
             'image' => 'nullable|image|max:1024',
         ]);
 
@@ -86,7 +93,9 @@ Route::middleware(['auth'])->group(function () {
             'categories' => $validatedData['categories'] ?? [],
             'subcategories' => $validatedData['subcategories'] ?? [],
             'brands' => $validatedData['brands'] ?? [],
-            'filters' => json_encode($formattedFilters),
+            'ranges' => $validatedData['ranges'] ?? [], // Add this line
+            'filters' => $formattedFilters,
+            'characteristics' => $validatedData['characteristics'] ?? [],
             'image' => $validatedData['image'],
         ]);
 

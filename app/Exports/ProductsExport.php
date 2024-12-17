@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\Brand;
 use App\Models\Filter;
+use App\Models\Characteristic; // Добавлено
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -35,6 +36,8 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             'Подкатегории',
             'Бренды',
             'Фильтры (название: значение)',
+            'Характеристики (название: значение)', // Добавлено
+            'Диапазон бренда', // Добавлено
         ];
     }
 
@@ -50,7 +53,9 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             $this->getNames(Category::class, $product->categories),
             $this->getNames(Subcategory::class, $product->subcategories),
             $this->getNames(Brand::class, $product->brands),
-            $this->formatFilters($product->filters),
+            $this->formatFilters($product->filters), // Handle filters as array
+            $this->formatCharacteristics($product->characteristics), // Добавлено
+            $this->getBrandRange($product->ranges), // Handle ranges as array
         ];
     }
 
@@ -70,29 +75,48 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
      */
     private function formatFilters($filters): string
     {
-        // Если фильтры не являются массивом или пустой строкой, вернем пустую строку
-        if (empty($filters) || !is_string($filters)) {
-            return '';
-        }
-
-        // Попробуем декодировать фильтры из строки
-        $decodedFilters = json_decode($filters, true);
-
-        // Если декодирование прошло неудачно (например, нет фильтров), возвращаем пустую строку
-        if (!is_array($decodedFilters)) {
+        if (empty($filters) || !is_array($filters)) {
             return '';
         }
 
         $formattedFilters = [];
-        foreach ($decodedFilters as $filterId => $filterValues) {
-            // Получаем название фильтра по его ID
+        foreach ($filters as $filterId => $filterValues) {
             $filterName = Filter::where('id', $filterId)->value('name');
             if ($filterName && is_array($filterValues)) {
-                // Преобразуем значения фильтра в строку
                 $formattedFilters[] = $filterName . ': ' . implode(', ', $filterValues);
             }
         }
-        // Возвращаем все фильтры в виде строки, разделенной точкой с запятой
         return implode('; ', $formattedFilters);
+    }
+
+    /**
+     * Форматирование характеристик (название характеристики: значение)
+     */
+    private function formatCharacteristics($characteristics): string
+    {
+        if (empty($characteristics) || !is_array($characteristics)) {
+            return '';
+        }
+
+        $formattedCharacteristics = [];
+        foreach ($characteristics as $characteristicId => $characteristicValue) {
+            $characteristicName = Characteristic::where('id', $characteristicId)->value('name');
+            if ($characteristicName) {
+                $formattedCharacteristics[] = $characteristicName . ': ' . $characteristicValue;
+            }
+        }
+        return implode('; ', $formattedCharacteristics);
+    }
+
+    /**
+     * Получить диапазон бренда
+     */
+    private function getBrandRange($ranges): string
+    {
+        if (empty($ranges) || !is_array($ranges)) {
+            return '';
+        }
+
+        return implode(', ', $ranges);
     }
 }

@@ -28,82 +28,140 @@
 
                 <div class="w-full md:w-1/2">
                     <label for="image" class="flex text-gray-700 font-bold mb-2">Изображение</label>
-                    <input type="file" id="image" wire:model="image" class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 h-full">
-                
+                    <input type="file" id="image" wire:model="image"
+                        class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 h-full">
+
                     @if ($currentImage)
                         <div class="mt-2">
                             <p>Текущее изображение:</p>
-                            <img src="{{ asset('storage/' . $currentImage) }}" alt="Изображение товара" style="max-height: 100px;">
+                            <img src="{{ asset('storage/' . $currentImage) }}" alt="Изображение товара"
+                                style="max-height: 100px;">
                         </div>
                     @endif
-                
+
                     @if ($image)
                         <div class="mt-2">
                             <p>Новое изображение:</p>
                             <img src="{{ $image->temporaryUrl() }}" alt="Новое изображение" style="max-height: 100px;">
                         </div>
                     @endif
-                
-                    @error('image') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+
+                    @error('image')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
-                
-                
+
+
 
 
                 <h3 class="mt-2">Выберите раздел</h3>
-                @foreach ($sections as $section)
-                    <label class="inline-block mr-4">
-                        <input type="checkbox" wire:model="sectionIds" value="{{ $section->id }}">
-                        {{ $section->name }}
-                    </label>
-                @endforeach
+                @if (count($sections) > 0)
+                    @foreach ($sections as $section)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="sectionIds" value="{{ $section->id }}">
+                            {{ $section->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для разделов.</p>
+                @endif
 
                 <h3 class="mt-2">Выберите категорию</h3>
-                @foreach ($categories as $category)
-                    <label class="inline-block mr-4">
-                        <input type="checkbox" wire:model="categoryIds" value="{{ $category->id }}">
-                        {{ $category->name }}
-                    </label>
-                @endforeach
+                @if (count($categories) > 0)
+                    @foreach ($categories as $category)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="categoryIds" value="{{ $category->id }}">
+                            {{ $category->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для категорий.</p>
+                @endif
 
                 <h3 class="mt-2">Выберите подкатегорию</h3>
-                @foreach ($subcategories as $subcategory)
-                    <label class="inline-block mr-4">
-                        <input type="checkbox" wire:model="subcategoryIds" value="{{ $subcategory->id }}">
-                        {{ $subcategory->name }}
-                    </label>
-                @endforeach
+                @if (count($subcategories) > 0)
+                    @foreach ($subcategories as $subcategory)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="subcategoryIds" value="{{ $subcategory->id }}">
+                            {{ $subcategory->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для подкатегорий.</p>
+                @endif
 
                 <h3 class="mt-2">Выберите бренд</h3>
-                @foreach ($brands as $brand)
-                    <label class="inline-block mr-4">
-                        <input type="checkbox" wire:model="brandIds" value="{{ $brand->id }}">
-                        {{ $brand->name }}
-                    </label>
-                @endforeach
+                @if (count($brands) > 0)
+                    @foreach ($brands as $brand)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="brandIds" value="{{ $brand->id }}">
+                            {{ $brand->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для брендов.</p>
+                @endif
+
+                <h3 class="mt-2">Выберите range</h3>
+                @if (count($ranges) > 0)
+                    @foreach ($ranges as $range)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="rangeIds" value="{{ $range->id }}">
+                            {{ $range->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для range.</p>
+                @endif
 
                 <h3 class="mt-2">Выберите фильтры</h3>
-                @foreach ($filters as $filter)
-                    <div class="mb-2">
-                        <h4 class="font-bold">{{ $filter->name }}</h4>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach ($filter->values as $value)
-                                <label class="inline-block mr-4">
-                                    <input type="checkbox"
-                                        wire:model="filterValues.{{ $filter->id }}.{{ $value }}"
-                                        id="filter-{{ $filter->id }}-{{ $value }}">
-                                    {{ $value }}
-                                </label>
-                            @endforeach
+                @if (count($filters) > 0)
+                    @foreach ($filters as $filter)
+                        <div class="mb-2">
+                            <h4 class="font-bold">{{ $filter->name }}</h4>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (count($filter->values) > 0)
+                                    @foreach ($filter->values as $value)
+                                        <label class="inline-block mr-4">
+                                            <input type="checkbox"
+                                                wire:model="filterValues.{{ $filter->id }}.{{ $value }}"
+                                                id="filter-{{ $filter->id }}-{{ $value }}">
+                                            {{ $value }}
+                                        </label>
+                                    @endforeach
+                                @else
+                                    <p>Нет найденных значений для фильтра {{ $filter->name }}.</p>
+                                @endif
+                            </div>
                         </div>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для фильтров.</p>
+                @endif
+
+
+
+                <h3 class="mt-2">Характеристики</h3>
+                @if (isset($characteristics) && count($characteristics) > 0)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach ($characteristics as $characteristic)
+                            <div class="form-group">
+                                <label for="characteristic-{{ $characteristic->id }}">{{ $characteristic->name }}</label>
+                                <input type="text" id="characteristic-{{ $characteristic->id }}"
+                                    wire:model="characteristicValues.{{ $characteristic->id }}" class="form-control w-full">
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+                @else
+                    <p>Нет найденных значений для характеристик.</p>
+                @endif
 
+                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded mt-3">Сохранить</button>
+            </form>
 
-
-                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
-                    <i class="fas fa-save"></i>
-                </button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
+                <i class="fas fa-save"></i>
+            </button>
             </form>
         @endif
 

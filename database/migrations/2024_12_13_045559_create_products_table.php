@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Название товара
-            $table->text('description'); // Описание товара
-            $table->text('categories')->nullable(); // Связанные категории
-            $table->text('sections')->nullable(); // Связанные разделы
-            $table->text('subcategories')->nullable(); // Связанные подкатегории
-            $table->text('brands')->nullable(); // Связанные бренды
-            $table->text('filters')->nullable(); // Связанные фильтры
+            $table->string('name'); 
+            $table->text('description'); 
+            $table->text('categories')->nullable(); 
+            $table->text('sections')->nullable(); 
+            $table->text('subcategories')->nullable(); 
+            $table->text('brands')->nullable();
+            $table->text('filters')->nullable(); 
+            $table->text('ranges')->nullable(); 
+            $table->text('characteristics')->nullable(); 
             $table->timestamps();
         });
     }

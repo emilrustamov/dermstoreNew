@@ -4,13 +4,14 @@ namespace App\Livewire;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Characteristic;
 use App\Models\Filter;
 use App\Models\Product;
+use App\Models\Range;
 use App\Models\Section;
 use App\Models\Subcategory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-
 
 class ProductCrud extends Component
 {
@@ -21,6 +22,8 @@ class ProductCrud extends Component
     public $subcategories;
     public $brands;
     public $filters;
+    public $ranges;
+    public $characteristics;
     public $image;
     public $currentImage; 
     public $name;
@@ -29,11 +32,13 @@ class ProductCrud extends Component
     public $categoryIds = [];
     public $subcategoryIds = [];
     public $brandIds = [];
+    public $rangeIds = [];
     public $filterIds = [];
     public $editId;
     public $filterValues = [];
+    public $characteristicValues = [];
 
-    public function mount( $category = null, $subcategory = null, $brand = null)
+    public function mount($category = null, $subcategory = null, $brand = null)
     {
         // Инициализация данных для создания товара
         $this->products = Product::all();
@@ -42,6 +47,8 @@ class ProductCrud extends Component
         $this->subcategories = Subcategory::all();
         $this->brands = Brand::all();
         $this->filters = Filter::all();
+        $this->ranges = Range::all();
+        $this->characteristics = Characteristic::all();
 
         // Фильтрация по категориям, подкатегориям и брендам
         if ($category) {
@@ -56,7 +63,6 @@ class ProductCrud extends Component
             $this->products = Product::whereJsonContains('brands', $brand)->get();
         }
     }
-
 
     public function create()
     {
@@ -74,6 +80,9 @@ class ProductCrud extends Component
             $formattedFilters[$filterId] = array_keys(array_filter($values)); // Оставляем только выбранные значения
         }
 
+        // Получаем названия диапазонов
+        $rangeNames = Range::whereIn('id', $this->rangeIds)->pluck('name')->toArray();
+
         Product::create([
             'name' => $this->name,
             'description' => $this->description,
@@ -81,8 +90,10 @@ class ProductCrud extends Component
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
             'brands' => $this->brandIds,
-            'filters' => json_encode($formattedFilters), 
-            'image' => $imagePath, 
+            'ranges' => $rangeNames, // Store range names
+            'filters' => $formattedFilters, // Store filters as array
+            'image' => $imagePath,
+            'characteristics' => $this->characteristicValues,
         ]);
 
         $this->resetForm();
@@ -96,13 +107,14 @@ class ProductCrud extends Component
         $this->name = $product->name;
         $this->description = $product->description;
 
-        $this->sectionIds = is_array($product->sections) ? $product->sections : json_decode($product->sections, true);
-        $this->categoryIds = is_array($product->categories) ? $product->categories : json_decode($product->categories, true);
-        $this->subcategoryIds = is_array($product->subcategories) ? $product->subcategories : json_decode($product->subcategories, true);
-        $this->brandIds = is_array($product->brands) ? $product->brands : json_decode($product->brands, true);
+        $this->sectionIds = $product->sections;
+        $this->categoryIds = $product->categories;
+        $this->subcategoryIds = $product->subcategories;
+        $this->brandIds = $product->brands;
+        $this->rangeIds = Range::whereIn('name', $product->ranges)->pluck('id')->toArray(); // Convert range names back to IDs
         $this->currentImage = $product->image; 
         // Разбираем фильтры
-        $filters = is_array($product->filters) ? $product->filters : json_decode($product->filters, true);
+        $filters = is_array($product->filters) ? $product->filters : [];
         if (!is_array($filters)) {
             $filters = [];
         }
@@ -113,8 +125,9 @@ class ProductCrud extends Component
                 $this->filterValues[$filterId][$value] = true;
             }
         }
-    }
 
+        $this->characteristicValues = $product->characteristics;
+    }
 
     public function update()
     {
@@ -127,13 +140,14 @@ class ProductCrud extends Component
         $product = Product::findOrFail($this->editId);
 
         $imagePath = $this->image ? $this->image->store('products', 'public') : $this->currentImage;
-    
-       
 
         $formattedFilters = [];
         foreach ($this->filterValues as $filterId => $values) {
             $formattedFilters[$filterId] = array_keys(array_filter($values));
         }
+
+        // Получаем названия диапазонов
+        $rangeNames = Range::whereIn('id', $this->rangeIds)->pluck('name')->toArray();
 
         $product->update([
             'name' => $this->name,
@@ -142,8 +156,10 @@ class ProductCrud extends Component
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
             'brands' => $this->brandIds,
-            'filters' => json_encode($formattedFilters),
+            'ranges' => $rangeNames, // Store range names
+            'filters' => $formattedFilters, // Store filters as array
             'image' => $imagePath,
+            'characteristics' => $this->characteristicValues,
         ]);
 
         $this->resetForm();
@@ -164,10 +180,12 @@ class ProductCrud extends Component
         $this->categoryIds = [];
         $this->subcategoryIds = [];
         $this->brandIds = [];
+        $this->rangeIds = [];
         $this->filterValues = [];
         $this->image = null;
         $this->currentImage = null;
         $this->editId = null;
+        $this->characteristicValues = [];
     }
 
     private function refreshData()
@@ -177,6 +195,8 @@ class ProductCrud extends Component
 
     public function render()
     {
-        return view('livewire.product-crud');
+        return view('livewire.product-crud', [
+            'characteristics' => $this->characteristics
+        ]);
     }
 }
