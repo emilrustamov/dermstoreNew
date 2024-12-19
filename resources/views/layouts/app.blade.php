@@ -196,18 +196,35 @@
             const brandsDisplay = document.getElementById('brands-display');
             const allBrands = document.getElementById('all-brands');
 
+            // Function to find the nearest filled letter
+            const findNearestFilledLetter = () => {
+                for (let letter of letters) {
+                    const selectedLetter = letter.getAttribute('data-letter');
+                    const group = allBrands.querySelector(`.brands-group[data-letter="${selectedLetter}"]`);
+                    if (group && group.innerHTML.trim() !== '<p>Бренды пока не добавлены</p>') {
+                        return group;
+                    }
+                }
+                return null;
+            };
+
+            // Show nearest filled letter's brands on initial load
+            const nearestGroup = findNearestFilledLetter();
+            if (nearestGroup) {
+                brandsDisplay.innerHTML = nearestGroup.innerHTML;
+            }
+
             letters.forEach(letter => {
                 letter.addEventListener('mouseover', () => {
                     const selectedLetter = letter.getAttribute('data-letter');
 
-                    // Найти соответствующую группу брендов
-                    const group = allBrands.querySelector(
-                        `.brands-group[data-letter="${selectedLetter}"]`);
+                    // Find the corresponding group of brands
+                    const group = allBrands.querySelector(`.brands-group[data-letter="${selectedLetter}"]`);
 
-                    // Очистить текущий список брендов
+                    // Clear the current list of brands
                     brandsDisplay.innerHTML = '';
 
-                    // Добавить бренды из выбранной группы
+                    // Add brands from the selected group
                     if (group) {
                         brandsDisplay.innerHTML = group.innerHTML;
                     }
