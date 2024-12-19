@@ -340,5 +340,9 @@
             </tbody>
         </table>
     </div>
-
+<style>
+    .collapse {
+        visibility: visible !important;
+    }
+    </style>
 </div>
