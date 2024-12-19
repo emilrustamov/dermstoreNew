@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Subcategory;
 use App\Models\Category;
+use App\Models\Subsubcategory;
 use Livewire\Component;
 
 class SubcategoryCrud extends Component
@@ -13,12 +14,15 @@ class SubcategoryCrud extends Component
     public $name; // Название подкатегории
     public $categoryIds = []; // ID выбранных категорий
     public $editId; // ID редактируемой подкатегории
+    public $selectedLinks = []; // Выбранные ссылки
+    public $allLinks = []; // Все ссылки
 
     public function mount()
     {
         // Инициализация данных
         $this->subcategories = Subcategory::all();
         $this->categories = Category::all();
+        $this->allLinks = $this->fetchAllLinks();
     }
 
     public function create()
@@ -29,6 +33,7 @@ class SubcategoryCrud extends Component
         Subcategory::create([
             'name' => $this->name,
             'categories' => $this->categoryIds,
+            'selected_links' => implode(',', $this->selectedLinks)
         ]);
 
         $this->resetForm();
@@ -42,6 +47,8 @@ class SubcategoryCrud extends Component
         $this->editId = $id;
         $this->name = $subcategory->name;
         $this->categoryIds = $subcategory->categories; // Получение связанных категорий
+        $this->selectedLinks = explode(',', $subcategory->selected_links); // Получение выбранных ссылок
+        $this->allLinks = $this->fetchAllLinks($id); // Получение всех ссылок
     }
 
     public function update()
@@ -54,6 +61,7 @@ class SubcategoryCrud extends Component
         $subcategory->update([
             'name' => $this->name,
             'categories' => $this->categoryIds,
+            'selected_links' => implode(',', $this->selectedLinks)
         ]);
 
         $this->resetForm();
@@ -72,6 +80,7 @@ class SubcategoryCrud extends Component
         $this->name = null;
         $this->categoryIds = [];
         $this->editId = null;
+        $this->selectedLinks = [];
     }
 
     private function refreshData()
@@ -79,8 +88,24 @@ class SubcategoryCrud extends Component
         $this->subcategories = Subcategory::all();
     }
 
+    private function fetchAllLinks($subcategoryId = null)
+    {
+        $links = [];
+
+        if ($subcategoryId) {
+            $subsubcategories = Subsubcategory::where('subcategories', 'LIKE', '%"'.(string) $subcategoryId.'"%')->get();
+            foreach ($subsubcategories as $subsubcategory) {
+                $links[] = ['id' => 'subsubcategory_' . $subsubcategory->id, 'name' => 'Subsubcategory: ' . $subsubcategory->name];
+            }
+        }
+
+        return $links;
+    }
+
     public function render()
     {
-        return view('livewire.subcategory-crud');
+        return view('livewire.subcategory-crud', [
+            'subcategories' => $this->subcategories,
+        ]);
     }
 }

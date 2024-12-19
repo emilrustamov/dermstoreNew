@@ -15,11 +15,12 @@ class Product extends Model
         'categories',
         'sections',
         'subcategories',
+        'subsubcategories', // Add this line
         'brands',
         'filters',
         'image',
         'characteristics',
-        'ranges', // Add this line
+        'ranges',
     ];
 
     // Преобразование полей из строки в массив и обратно
@@ -27,16 +28,23 @@ class Product extends Model
         'categories' => 'array',
         'sections' => 'array',
         'subcategories' => 'array',
+        'subsubcategories' => 'array', // Add this line
         'brands' => 'array',
         'filters' => 'array',
         'characteristics' => 'array',
-        'ranges' => 'array', // Add this line
+        'ranges' => 'array',
     ];
 
     // Связь с подкатегориями (для удобства работы)
     public function subcategories()
     {
         return $this->belongsToMany(Subcategory::class, 'product_subcategory');
+    }
+
+    // Связь с подподкатегориями (для удобства работы)
+    public function subsubcategories()
+    {
+        return $this->belongsToMany(Subsubcategory::class, 'product_subsubcategory');
     }
 
     // Define the relationship with Characteristic

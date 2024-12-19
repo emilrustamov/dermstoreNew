@@ -9,12 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('sections', function (Blueprint $table) {
+        Schema::create('subsubcategories', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Название секции
-            $table->string('selected_links')->nullable(); // New column for selected links
+            $table->string('name'); // Название подподкатегории
+            $table->string('subcategories')->nullable(); // ID подкатегорий, записанные через запятую
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sections');
+        Schema::dropIfExists('subsubcategories');
     }
 };

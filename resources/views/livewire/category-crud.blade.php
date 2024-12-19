@@ -17,6 +17,16 @@
                     </label>
                 @endforeach
 
+                <div class="mt-2">
+                    <h2 class="text-lg font-semibold">Популярные ссылки</h2>
+                    @foreach ($allLinks as $link)
+                        <div>
+                            <input type="checkbox" wire:model="selectedLinks" value="{{ $link['id'] }}">
+                            <label>{{ $link['name'] }}</label>
+                        </div>
+                    @endforeach
+                </div>
+
                 <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
                     <i class="fas fa-save"></i>
                 </button>

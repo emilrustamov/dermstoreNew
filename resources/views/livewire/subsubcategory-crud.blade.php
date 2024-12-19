@@ -1,50 +1,51 @@
 <div class="container my-4">
     <div>
-      
-        <h1 class="text-xl font-bold mb-4">Разделы</h1>
+        <h1 class="text-xl font-bold mb-4">Подподкатегории</h1>
 
         @if (Auth::check() && Auth::user()->isAdmin())
-            <!-- Create / Edit Form -->
             <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
-                <input type="text" wire:model="name" placeholder="Введите название раздела" class="border rounded px-2 py-1">
+                <input type="text" wire:model="name" placeholder="Введите название подподкатегории" class="border rounded px-2 py-1">
                 @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                <div class="mt-2">
-                    <h2 class="text-lg font-semibold">Избранные ссылки</h2>
-                    @foreach ($allLinks as $link)
-                        <div>
-                            <input type="checkbox" wire:model="selectedLinks" value="{{ $link['id'] }}">
-                            <label>{{ $link['name'] }}</label>
-                        </div>
-                    @endforeach
-                </div>
+
+                <h3 class="mt-2">Выберите подкатегории</h3>
+                @foreach ($subcategories as $subcategory)
+                    <label class="inline-block mr-4">
+                        <input type="checkbox" wire:model="subcategoryIds" value="{{ $subcategory->id }}">
+                        {{ $subcategory->name }}
+                    </label>
+                @endforeach
+
                 <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
                     <i class="fas fa-save"></i>
                 </button>
             </form>
         @endif
 
-        <!-- Table -->
         <table class="w-full border-collapse border border-gray-300">
             <thead>
                 <tr>
                     <th class="border border-gray-300 px-2 py-1">ID</th>
                     <th class="border border-gray-300 px-2 py-1">Название</th>
+                    <th class="border border-gray-300 px-2 py-1">Подкатегории</th>
                     @if (Auth::check() && Auth::user()->isAdmin())
                         <th class="border border-gray-300 px-2 py-1">Действия</th>
                     @endif
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sections as $section)
+                @foreach ($subsubcategories as $subsubcategory)
                     <tr>
-                        <td class="border border-gray-300 px-2 py-1">{{ $section->id }}</td>
-                        <td class="border border-gray-300 px-2 py-1">{{ $section->name }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ $subsubcategory->id }}</td>
+                        <td class="border border-gray-300 px-2 py-1">{{ $subsubcategory->name }}</td>
+                        <td class="border border-gray-300 px-2 py-1">
+                            {{ implode(', ', $subsubcategory->subcategories) }}
+                        </td>
                         @if (Auth::check() && Auth::user()->isAdmin())
                             <td class="border border-gray-300 px-2 py-1">
-                                <button wire:click="edit({{ $section->id }})" class="bg-yellow-500 text-white px-2 py-1 rounded">
+                                <button wire:click="edit({{ $subsubcategory->id }})" class="bg-yellow-500 text-white px-2 py-1 rounded">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button wire:click="delete({{ $section->id }})" class="bg-red-500 text-white px-2 py-1 rounded">
+                                <button wire:click="delete({{ $subsubcategory->id }})" class="bg-red-500 text-white px-2 py-1 rounded">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>

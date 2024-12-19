@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('categories')->nullable(); 
             $table->text('sections')->nullable(); 
             $table->text('subcategories')->nullable(); 
+            $table->text('subsubcategories')->nullable(); 
             $table->text('brands')->nullable();
             $table->text('filters')->nullable(); 
             $table->text('ranges')->nullable(); 

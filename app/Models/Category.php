@@ -9,7 +9,7 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'sections'];
+    protected $fillable = ['name', 'sections', 'selected_links'];
 
   
     protected $casts = [

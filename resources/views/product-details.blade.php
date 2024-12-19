@@ -34,7 +34,7 @@
                 <p><strong>Бренды:</strong>
                     {{ implode(', ',\App\Models\Brand::whereIn('id', $product->brands ?? [])->pluck('name')->toArray()) }}
                 </p>
-                <p><strong>Ranges Бренда:</strong>
+                <p><strong>Линейка бренда:</strong>
                     @if (!empty($product->ranges) && is_array($product->ranges))
                         {{ implode(', ', $product->ranges) }}
                     @else
@@ -159,7 +159,7 @@
 
                 <!-- Ranges -->
                 <div class="form-group">
-                    <label>Ranges</label>
+                    <label>Линейка бренда</label>
                     <div class="d-flex flex-wrap gap-2">
                         @foreach (\App\Models\Range::all() as $range)
                             <div class="form-check-inline">

@@ -12,7 +12,7 @@ use App\Models\Section;
 use App\Models\Subcategory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-
+use App\Models\Subsubcategory;
 class ProductCrud extends Component
 {
     use WithFileUploads;
@@ -20,6 +20,7 @@ class ProductCrud extends Component
     public $sections;
     public $categories;
     public $subcategories;
+    public $subsubcategories;
     public $brands;
     public $filters;
     public $ranges;
@@ -45,6 +46,7 @@ class ProductCrud extends Component
         $this->sections = Section::all();
         $this->categories = Category::all();
         $this->subcategories = Subcategory::all();
+        $this->subsubcategories = Subsubcategory::all();
         $this->brands = Brand::all();
         $this->filters = Filter::all();
         $this->ranges = Range::all();

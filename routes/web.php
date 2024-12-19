@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Livewire\CharacteristicCrud;
 use App\Livewire\RangeCrud;
+use App\Livewire\SubsubcategoryCrud;
 
 Auth::routes();
 
@@ -29,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/filters', FilterCrud::class)->name('filters');
     Route::get('/products', ProductCrud::class)->name('products');
     Route::get('/ranges', RangeCrud::class)->name('ranges');
+    Route::get('/subsubcategories', SubsubcategoryCrud::class)->name('subsubcategories');
 
     Route::get('/characteristics', CharacteristicCrud::class)->name('characteristics');
 
@@ -44,6 +46,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/brand/{brand}', function ($brand) {
         return view('dashboard', ['brandId' => $brand]);
     })->name('dashboard.byBrand');
+
+    Route::get('/dashboard/subsubcategory/{subsubcategory}', function ($subsubcategory) {
+        return view('dashboard', ['subsubcategoryId' => $subsubcategory]);
+    })->name('dashboard.bySubsubcategory');
+
     Route::get('/dashboard/product/{id}', function ($id) {
         $product = \App\Models\Product::findOrFail($id);
         return view('product-details', compact('product'));

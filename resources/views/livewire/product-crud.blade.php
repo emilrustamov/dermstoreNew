@@ -90,6 +90,18 @@
                     <p>Нет найденных значений для подкатегорий.</p>
                 @endif
 
+                <h3 class="mt-2">Выберите подподкатегорию</h3>
+                @if (count($subsubcategories) > 0)
+                    @foreach ($subsubcategories as $subsubcategory)
+                        <label class="inline-block mr-4">
+                            <input type="checkbox" wire:model="subsubcategoryIds" value="{{ $subsubcategory->id }}">
+                            {{ $subsubcategory->name }}
+                        </label>
+                    @endforeach
+                @else
+                    <p>Нет найденных значений для подподкатегорий.</p>
+                @endif
+
                 <h3 class="mt-2">Выберите бренд</h3>
                 @if (count($brands) > 0)
                     @foreach ($brands as $brand)
@@ -102,7 +114,7 @@
                     <p>Нет найденных значений для брендов.</p>
                 @endif
 
-                <h3 class="mt-2">Выберите range</h3>
+                <h3 class="mt-2">Выберите линейку бренда</h3>
                 @if (count($ranges) > 0)
                     @foreach ($ranges as $range)
                         <label class="inline-block mr-4">
@@ -156,8 +168,7 @@
                     <p>Нет найденных значений для характеристик.</p>
                 @endif
 
-                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded mt-3">Сохранить</button>
-            </form>
+              
 
             <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
                 <i class="fas fa-save"></i>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name'); // Название категории
             $table->text('sections')->nullable(); // Связанные разделы
+            $table->string('selected_links')->nullable(); // New column for selected links
             $table->timestamps();
         });
     }

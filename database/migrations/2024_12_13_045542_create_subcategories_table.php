@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name'); // Название подкатегории
             $table->string('categories')->nullable(); // ID категорий, записанные через запятую
+            $table->string('selected_links')->nullable(); // New column for selected links
             $table->timestamps();
         });
     }

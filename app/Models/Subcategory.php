@@ -9,7 +9,7 @@ class Subcategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'categories'];
+    protected $fillable = ['name', 'categories', 'selected_links'];
 
     // Преобразование `categories` из строки в массив и обратно
     protected $casts = [
@@ -20,5 +20,10 @@ class Subcategory extends Model
     public function products()
     {
         return $this->belongsToMany(Product::class, 'product_subcategory');
+    }
+
+    public function subsubcategories()
+    {
+        return Subsubcategory::where('subcategories', 'LIKE', '%"'.(string) $this->id.'"%')->get();
     }
 }

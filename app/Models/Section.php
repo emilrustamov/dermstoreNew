@@ -9,7 +9,7 @@ class Section extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'selected_links'];
 
     
     // public function categories()

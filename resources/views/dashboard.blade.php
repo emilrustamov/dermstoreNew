@@ -25,7 +25,49 @@
             $products = $productsQuery->get();
         @endphp
 
+        @if (isset($sectionId) || isset($categoryId) || isset($subcategoryId))
+            @php
+                $entity = null;
+                $popularLinks = [];
 
+                if (isset($sectionId)) {
+                    $entity = \App\Models\Section::find($sectionId);
+                } elseif (isset($categoryId)) {
+                    $entity = \App\Models\Category::find($categoryId);
+                } elseif (isset($subcategoryId)) {
+                    $entity = \App\Models\Subcategory::find($subcategoryId);
+                }
+
+                if ($entity) {
+                    $popularLinks = explode(',', $entity->selected_links);
+                }
+            @endphp
+
+            @if (!empty($popularLinks))
+                <div class="popular-links my-4">
+                    <h2 class="text-xl font-bold mb-4">Популярные ссылки</h2>
+                    <div class="popular-links-grid">
+                        @foreach ($popularLinks as $linkId)
+                            @php
+                                $link = null;
+                                if (strpos($linkId, 'category_') === 0) {
+                                    $link = \App\Models\Category::find(str_replace('category_', '', $linkId));
+                                } elseif (strpos($linkId, 'subcategory_') === 0) {
+                                    $link = \App\Models\Subcategory::find(str_replace('subcategory_', '', $linkId));
+                                } elseif (strpos($linkId, 'subsubcategory_') === 0) {
+                                    $link = \App\Models\Subsubcategory::find(str_replace('subsubcategory_', '', $linkId));
+                                }
+                            @endphp
+                            @if ($link)
+                                <div class="popular-link-card">
+                                    <a href="{{ route('dashboard.by' . class_basename($link), $link->id) }}">{{ $link->name }}</a>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        @endif
 
         <div class="product-container my-4">
 
@@ -53,27 +95,6 @@
                     'products_today' => Product::whereDate('created_at', Carbon::today())->count(),
                 ];
             @endphp
-            <style>
-                .dashboard-stats {
-                    display: flex;
-                    flex-direction: column;
-                    margin-bottom: 20px;
-                }
-
-                .stats-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 20px;
-                }
-
-                .stat-card {
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    padding: 15px;
-                    background: #f9f9f9;
-                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                }
-            </style>
             @if (request()->is('dashboard'))
                 <div class="dashboard-stats my-4">
                     <h2 class="text-xl font-bold mb-4">Общая статистика</h2>
@@ -117,19 +138,17 @@
                     Последние добавленные товары
                 @else
                     Товары 
-                    @if (isset($categoryId))
-                        из категории {{ \App\Models\Category::find($categoryId)->name }}
-                    @elseif (isset($subcategoryId))
-                        из подкатегории {{ \App\Models\Subcategory::find($subcategoryId)->name }}
-                    @elseif (isset($brandId))
-                        бренда {{ \App\Models\Brand::find($brandId)->name }}
-                    @elseif (isset($sectionId))
-                        из раздела {{ \App\Models\Section::find($sectionId)->name }}
+                    @if (isset($categoryId) && $category = \App\Models\Category::find($categoryId))
+                        из категории {{ $category->name }}
+                    @elseif (isset($subcategoryId) && $subcategory = \App\Models\Subcategory::find($subcategoryId))
+                        из подкатегории {{ $subcategory->name }}
+                    @elseif (isset($brandId) && $brand = \App\Models\Brand::find($brandId))
+                        бренда {{ $brand->name }}
+                    @elseif (isset($sectionId) && $section = \App\Models\Section::find($sectionId))
+                        из раздела {{ $section->name }}
                     @endif
                 @endif
             </h1>
-
-
 
             @if ($products->count())
                 <div class="product-grid">
