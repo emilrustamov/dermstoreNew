@@ -15,7 +15,7 @@
                                 Название и Описание
                             </button>
                         </h2>
-                        <div id="collapseNameDescription" class="accordion-collapse collapse show" aria-labelledby="headingNameDescription" data-bs-parent="#accordionExample">
+                        <div id="collapseNameDescription" class="accordion-collapse custom-collapse show" aria-labelledby="headingNameDescription" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="flex mb-2 gap-3 align-items-center">
                                     <div class="w-full md:w-1/2 mb-4 md:mb-0">
@@ -46,7 +46,7 @@
                                 Изображение
                             </button>
                         </h2>
-                        <div id="collapseImage" class="accordion-collapse collapse" aria-labelledby="headingImage" data-bs-parent="#accordionExample">
+                        <div id="collapseImage" class="accordion-collapse custom-collapse" aria-labelledby="headingImage" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 <div class="w-full md:w-1/2">
                                     <label for="image" class="flex text-gray-700 font-bold mb-2">Изображение</label>
@@ -83,7 +83,7 @@
                                 Выберите раздел
                             </button>
                         </h2>
-                        <div id="collapseSections" class="accordion-collapse collapse" aria-labelledby="headingSections" data-bs-parent="#accordionExample">
+                        <div id="collapseSections" class="accordion-collapse custom-collapse" aria-labelledby="headingSections" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($sections) > 0)
                                     @foreach ($sections as $section)
@@ -106,7 +106,7 @@
                                 Выберите категорию
                             </button>
                         </h2>
-                        <div id="collapseCategories" class="accordion-collapse collapse" aria-labelledby="headingCategories" data-bs-parent="#accordionExample">
+                        <div id="collapseCategories" class="accordion-collapse custom-collapse" aria-labelledby="headingCategories" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($categories) > 0)
                                     @foreach ($categories as $category)
@@ -129,7 +129,7 @@
                                 Выберите подкатегорию
                             </button>
                         </h2>
-                        <div id="collapseSubcategories" class="accordion-collapse collapse" aria-labelledby="headingSubcategories" data-bs-parent="#accordionExample">
+                        <div id="collapseSubcategories" class="accordion-collapse custom-collapse" aria-labelledby="headingSubcategories" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($subcategories) > 0)
                                     @foreach ($subcategories as $subcategory)
@@ -152,7 +152,7 @@
                                 Выберите подподкатегорию
                             </button>
                         </h2>
-                        <div id="collapseSubsubcategories" class="accordion-collapse collapse" aria-labelledby="headingSubsubcategories" data-bs-parent="#accordionExample">
+                        <div id="collapseSubsubcategories" class="accordion-collapse custom-collapse" aria-labelledby="headingSubsubcategories" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($subsubcategories) > 0)
                                     @foreach ($subsubcategories as $subsubcategory)
@@ -175,7 +175,7 @@
                                 Выберите бренд
                             </button>
                         </h2>
-                        <div id="collapseBrands" class="accordion-collapse collapse" aria-labelledby="headingBrands" data-bs-parent="#accordionExample">
+                        <div id="collapseBrands" class="accordion-collapse custom-collapse" aria-labelledby="headingBrands" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($brands) > 0)
                                     @foreach ($brands as $brand)
@@ -198,7 +198,7 @@
                                 Выберите линейку бренда
                             </button>
                         </h2>
-                        <div id="collapseRanges" class="accordion-collapse collapse" aria-labelledby="headingRanges" data-bs-parent="#accordionExample">
+                        <div id="collapseRanges" class="accordion-collapse custom-collapse" aria-labelledby="headingRanges" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($ranges) > 0)
                                     @foreach ($ranges as $range)
@@ -221,7 +221,7 @@
                                 Выберите фильтры
                             </button>
                         </h2>
-                        <div id="collapseFilters" class="accordion-collapse collapse" aria-labelledby="headingFilters" data-bs-parent="#accordionExample">
+                        <div id="collapseFilters" class="accordion-collapse custom-collapse" aria-labelledby="headingFilters" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (count($filters) > 0)
                                     @foreach ($filters as $filter)
@@ -255,7 +255,7 @@
                                 Характеристики
                             </button>
                         </h2>
-                        <div id="collapseCharacteristics" class="accordion-collapse collapse" aria-labelledby="headingCharacteristics" data-bs-parent="#accordionExample">
+                        <div id="collapseCharacteristics" class="accordion-collapse custom-collapse" aria-labelledby="headingCharacteristics" data-bs-parent="#accordionExample">
                             <div class="accordion-body">
                                 @if (isset($characteristics) && count($characteristics) > 0)
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
