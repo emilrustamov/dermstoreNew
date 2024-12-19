@@ -4,20 +4,48 @@
 
         @if (Auth::check() && Auth::user()->isAdmin())
             <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
-                <input type="text" wire:model="name" placeholder="Введите название range" class="border rounded px-2 py-1">
-                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-
-                <h3 class="mt-2">Выберите бренды</h3>
-                @foreach ($brands as $brand)
-                    <label class="inline-block mr-4">
-                        <input type="checkbox" wire:model="brandIds" value="{{ $brand->id }}">
-                        {{ $brand->name }}
-                    </label>
-                @endforeach
-
-                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
-                    <i class="fas fa-save"></i>
-                </button>
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-2 py-1">Название</th>
+                            <th class="border border-gray-300 px-2 py-1">Выберите бренды</th>
+                            <th class="border border-gray-300 px-2 py-1">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-2 py-1" rowspan="{{ count($brands) }}">
+                                <input type="text" wire:model="name" placeholder="Введите название range" class="border rounded px-2 py-1">
+                                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </td>
+                            <td class="border border-gray-300 px-2 py-1">
+                                @if (isset($brands[0]))
+                                    <label class="inline-block mr-4">
+                                        <input type="checkbox" wire:model="brandIds" value="{{ $brands[0]->id }}">
+                                        {{ $brands[0]->name }}
+                                    </label>
+                                @endif
+                            </td>
+                            <td class="border border-gray-300 px-2 py-1" rowspan="{{ count($brands) }}">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @for ($i = 1; $i < count($brands); $i++)
+                            <tr>
+                                <td class="border border-gray-300 px-2 py-1">
+                                    @if (isset($brands[$i]))
+                                        <label class="inline-block mr-4">
+                                            <input type="checkbox" wire:model="brandIds" value="{{ $brands[$i]->id }}">
+                                            {{ $brands[$i]->name }}
+                                        </label>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
             </form>
         @endif
 

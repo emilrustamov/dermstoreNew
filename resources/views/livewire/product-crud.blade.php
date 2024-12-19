@@ -5,6 +5,7 @@
         <h1 class="text-xl font-bold mb-4">Товары</h1>
 
         @if (Auth::check() && Auth::user()->isAdmin())
+            <button id="toggle-accordions" class="btn btn-primary mb-4">Раскрыть/закрыть</button>
             <!-- Create / Edit Form -->
             <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" enctype="multipart/form-data" class="mb-4">
                 <div class="accordion" id="accordionExample">
@@ -346,3 +347,22 @@
     }
     </style>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('toggle-accordions');
+        let accordionsOpen = false;
+
+        toggleButton.addEventListener('click', () => {
+            const accordions = document.querySelectorAll('.accordion-collapse');
+            accordions.forEach(accordion => {
+                if (accordionsOpen) {
+                    accordion.classList.remove('show');
+                } else {
+                    accordion.classList.add('show');
+                }
+            });
+            accordionsOpen = !accordionsOpen;
+        });
+    });
+</script>

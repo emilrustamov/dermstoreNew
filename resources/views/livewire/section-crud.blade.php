@@ -6,20 +6,48 @@
         @if (Auth::check() && Auth::user()->isAdmin())
             <!-- Create / Edit Form -->
             <form wire:submit.prevent="{{ $editId ? 'update' : 'create' }}" class="mb-4">
-                <input type="text" wire:model="name" placeholder="Введите название раздела" class="border rounded px-2 py-1">
-                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
-                <div class="mt-2">
-                    <h2 class="text-lg font-semibold">Избранные ссылки</h2>
-                    @foreach ($allLinks as $link)
-                        <div>
-                            <input type="checkbox" wire:model="selectedLinks" value="{{ $link['id'] }}">
-                            <label>{{ $link['name'] }}</label>
-                        </div>
-                    @endforeach
-                </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
-                    <i class="fas fa-save"></i>
-                </button>
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-2 py-1">Название</th>
+                            <th class="border border-gray-300 px-2 py-1">Избранные ссылки</th>
+                            <th class="border border-gray-300 px-2 py-1">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 px-2 py-1" rowspan="{{ count($allLinks) }}">
+                                <input type="text" wire:model="name" placeholder="Введите название раздела" class="border rounded px-2 py-1">
+                                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            </td>
+                            <td class="border border-gray-300 px-2 py-1">
+                                @if (isset($allLinks[0]))
+                                    <div>
+                                        <input type="checkbox" wire:model="selectedLinks" value="{{ $allLinks[0]['id'] }}">
+                                        <label>{{ $allLinks[0]['name'] }}</label>
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="border border-gray-300 px-2 py-1" rowspan="{{ count($allLinks) }}">
+                                <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @for ($i = 1; $i < count($allLinks); $i++)
+                            <tr>
+                                <td class="border border-gray-300 px-2 py-1">
+                                    @if (isset($allLinks[$i]))
+                                        <div>
+                                            <input type="checkbox" wire:model="selectedLinks" value="{{ $allLinks[$i]['id'] }}">
+                                            <label>{{ $allLinks[$i]['name'] }}</label>
+                                        </div>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
             </form>
         @endif
 
