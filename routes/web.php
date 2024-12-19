@@ -65,6 +65,7 @@ Route::middleware(['auth'])->group(function () {
             'sections' => 'nullable|array',
             'categories' => 'nullable|array',
             'subcategories' => 'nullable|array',
+            'subsubcategories' => 'nullable|array', // Add this line
             'brands' => 'nullable|array',
             'ranges' => 'nullable|array', // Add this line
             'filters' => 'nullable|array',
@@ -99,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
             'sections' => $validatedData['sections'] ?? [],
             'categories' => $validatedData['categories'] ?? [],
             'subcategories' => $validatedData['subcategories'] ?? [],
+            'subsubcategories' => $validatedData['subsubcategories'] ?? [], // Add this line
             'brands' => $validatedData['brands'] ?? [],
             'ranges' => $validatedData['ranges'] ?? [], // Add this line
             'filters' => $formattedFilters,

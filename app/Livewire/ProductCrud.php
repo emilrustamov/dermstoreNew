@@ -13,6 +13,7 @@ use App\Models\Subcategory;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Subsubcategory;
+
 class ProductCrud extends Component
 {
     use WithFileUploads;
@@ -32,6 +33,7 @@ class ProductCrud extends Component
     public $sectionIds = [];
     public $categoryIds = [];
     public $subcategoryIds = [];
+    public $subsubcategoryIds = [];
     public $brandIds = [];
     public $rangeIds = [];
     public $filterIds = [];
@@ -79,7 +81,7 @@ class ProductCrud extends Component
         // Преобразуем фильтры в формат: ["filter_id": ["value1", "value2"]]
         $formattedFilters = [];
         foreach ($this->filterValues as $filterId => $values) {
-            $formattedFilters[$filterId] = array_keys(array_filter($values)); // Оставляем только выбранные значения
+            $formattedFilters[$filterId] = array_values($values); // Оставляем только выбранные значения
         }
 
         // Получаем названия диапазонов
@@ -91,6 +93,7 @@ class ProductCrud extends Component
             'sections' => $this->sectionIds,
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
+            'subsubcategories' => $this->subsubcategoryIds,
             'brands' => $this->brandIds,
             'ranges' => $rangeNames, // Store range names
             'filters' => $formattedFilters, // Store filters as array
@@ -112,6 +115,7 @@ class ProductCrud extends Component
         $this->sectionIds = $product->sections;
         $this->categoryIds = $product->categories;
         $this->subcategoryIds = $product->subcategories;
+        $this->subsubcategoryIds = $product->subsubcategories;
         $this->brandIds = $product->brands;
         $this->rangeIds = Range::whereIn('name', $product->ranges)->pluck('id')->toArray(); // Convert range names back to IDs
         $this->currentImage = $product->image; 
@@ -124,7 +128,7 @@ class ProductCrud extends Component
         // Приводим фильтры к структуре, понятной для чекбоксов
         foreach ($filters as $filterId => $values) {
             foreach ($values as $value) {
-                $this->filterValues[$filterId][$value] = true;
+                $this->filterValues[$filterId][] = $value;
             }
         }
 
@@ -145,7 +149,7 @@ class ProductCrud extends Component
 
         $formattedFilters = [];
         foreach ($this->filterValues as $filterId => $values) {
-            $formattedFilters[$filterId] = array_keys(array_filter($values));
+            $formattedFilters[$filterId] = array_values($values);
         }
 
         // Получаем названия диапазонов
@@ -157,6 +161,7 @@ class ProductCrud extends Component
             'sections' => $this->sectionIds,
             'categories' => $this->categoryIds,
             'subcategories' => $this->subcategoryIds,
+            'subsubcategories' => $this->subsubcategoryIds,
             'brands' => $this->brandIds,
             'ranges' => $rangeNames, // Store range names
             'filters' => $formattedFilters, // Store filters as array
@@ -181,6 +186,7 @@ class ProductCrud extends Component
         $this->sectionIds = [];
         $this->categoryIds = [];
         $this->subcategoryIds = [];
+        $this->subsubcategoryIds = [];
         $this->brandIds = [];
         $this->rangeIds = [];
         $this->filterValues = [];

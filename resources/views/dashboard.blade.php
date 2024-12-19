@@ -1,29 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-    
+
     <div class="container" style="padding: 0 40px;">
         @php
             $productsQuery = \App\Models\Product::query();
 
-            if (isset($categoryId)) {
-                $productsQuery->where('categories', 'LIKE', '%"'.(string) $categoryId.'"%');
+            if (request('categoryId')) {
+                $productsQuery->where('categories', 'LIKE', '%"' . (string) request('categoryId') . '"%');
             }
 
-            if (isset($subcategoryId)) {
-                $productsQuery->where('subcategories', 'LIKE', '%"'.(string) $subcategoryId.'"%');
+            if (request('subcategoryId')) {
+                $productsQuery->where('subcategories', 'LIKE', '%"' . (string) request('subcategoryId') . '"%');
             }
 
-            if (isset($brandId)) {
-                $productsQuery->where('brands', 'LIKE', '%"'.(string) $brandId.'"%');
+            if (request('brandId')) {
+                $productsQuery->where('brands', 'LIKE', '%"' . (string) request('brandId') . '"%');
             }
 
-            if (isset($sectionId)) {
-                $productsQuery->where('sections', 'LIKE', '%"'.(string) $sectionId.'"%');
+            if (request('sectionId')) {
+                $productsQuery->where('sections', 'LIKE', '%"' . (string) request('sectionId') . '"%');
             }
 
             $products = $productsQuery->get();
         @endphp
+        <!-- Brand Filter -->
+        <div class="brand-filter my-4">
+            <form action="{{ url()->current() }}" method="GET" style="display: flex; align-items: center;">
+            <div class="form-group" style="margin-right: 10px;">
+                {{-- <label for="brand" style="margin-right: 10px;">Фильтр по брендам</label> --}}
+                <select name="brandId" id="brand" class="form-control">
+                <option value="">Выберите бренд</option>
+                @foreach (\App\Models\Brand::all() as $brand)
+                    <option value="{{ $brand->id }}" {{ request('brandId') == $brand->id ? 'selected' : '' }}>
+                    {{ $brand->name }}
+                    </option>
+                @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Фильтровать</button>
+            </form>
+        </div>
 
         @if (isset($sectionId) || isset($categoryId) || isset($subcategoryId))
             @php
@@ -55,12 +72,15 @@
                                 } elseif (strpos($linkId, 'subcategory_') === 0) {
                                     $link = \App\Models\Subcategory::find(str_replace('subcategory_', '', $linkId));
                                 } elseif (strpos($linkId, 'subsubcategory_') === 0) {
-                                    $link = \App\Models\Subsubcategory::find(str_replace('subsubcategory_', '', $linkId));
+                                    $link = \App\Models\Subsubcategory::find(
+                                        str_replace('subsubcategory_', '', $linkId),
+                                    );
                                 }
                             @endphp
                             @if ($link)
                                 <div class="popular-link-card">
-                                    <a href="{{ route('dashboard.by' . class_basename($link), $link->id) }}">{{ $link->name }}</a>
+                                    <a
+                                        href="{{ route('dashboard.by' . class_basename($link), $link->id) }}">{{ $link->name }}</a>
                                 </div>
                             @endif
                         @endforeach
@@ -137,14 +157,14 @@
                 @if (request()->is('dashboard'))
                     Последние добавленные товары
                 @else
-                    Товары 
-                    @if (isset($categoryId) && $category = \App\Models\Category::find($categoryId))
+                    Товары
+                    @if (isset($categoryId) && ($category = \App\Models\Category::find($categoryId)))
                         из категории {{ $category->name }}
-                    @elseif (isset($subcategoryId) && $subcategory = \App\Models\Subcategory::find($subcategoryId))
+                    @elseif (isset($subcategoryId) && ($subcategory = \App\Models\Subcategory::find($subcategoryId)))
                         из подкатегории {{ $subcategory->name }}
-                    @elseif (isset($brandId) && $brand = \App\Models\Brand::find($brandId))
+                    @elseif (isset($brandId) && ($brand = \App\Models\Brand::find($brandId)))
                         бренда {{ $brand->name }}
-                    @elseif (isset($sectionId) && $section = \App\Models\Section::find($sectionId))
+                    @elseif (isset($sectionId) && ($section = \App\Models\Section::find($sectionId)))
                         из раздела {{ $section->name }}
                     @endif
                 @endif
@@ -153,21 +173,19 @@
             @if ($products->count())
                 <div class="product-grid">
                     @foreach ($products as $product)
-                        <div class="product-card">
+                        <a href="{{ route('dashboard.product.details', $product->id) }}" class="product-card">
                             <div class="product-info">
                                 @if ($product->image)
                                     <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                                         class="product-image">
                                 @else
-                                <img src="https://via.placeholder.com/150?text=No+Image" alt="Изображение отсутствует" class="product-image">
-                                      
+                                    <img src="https://via.placeholder.com/150?text=No+Image" alt="Изображение отсутствует"
+                                        class="product-image">
                                 @endif
-                                <h3><a
-                                        href="{{ route('dashboard.product.details', $product->id) }}">{{ $product->name }}</a>
-                                </h3>
+                                <h3>{{ $product->name }}</h3>
                                 {{-- <p>{{ $product->description }}</p> --}}
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @else
@@ -177,5 +195,5 @@
 
     </div>
 
-    
+
 @endsection

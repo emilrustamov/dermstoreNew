@@ -13,55 +13,75 @@
         <!-- Просмотр информации о товаре -->
         @if (!request()->has('edit'))
             <div>
-                <p><strong>Название:</strong> {{ $product->name }}</p>
-                <p><strong>Описание:</strong> {{ $product->description }}</p>
-                <p><strong>Изображение:</strong></p>
-                @if ($product->image)
-                    <img src="{{ asset('storage/' . $product->image) }}" alt="Изображение товара"
-                        style="max-width: 200px; height: auto;">
-                @else
-                    <p>Изображение отсутствует</p>
-                @endif
-                <p><strong>Разделы:</strong>
-                    {{ implode(', ',\App\Models\Section::whereIn('id', $product->sections ?? [])->pluck('name')->toArray()) }}
-                </p>
-                <p><strong>Категории:</strong>
-                    {{ implode(', ',\App\Models\Category::whereIn('id', $product->categories ?? [])->pluck('name')->toArray()) }}
-                </p>
-                <p><strong>Подкатегории:</strong>
-                    {{ implode(', ',\App\Models\Subcategory::whereIn('id', $product->subcategories ?? [])->pluck('name')->toArray()) }}
-                </p>
-                <p><strong>Бренды:</strong>
-                    {{ implode(', ',\App\Models\Brand::whereIn('id', $product->brands ?? [])->pluck('name')->toArray()) }}
-                </p>
-                <p><strong>Линейка бренда:</strong>
-                    @if (!empty($product->ranges) && is_array($product->ranges))
-                        {{ implode(', ', $product->ranges) }}
-                    @else
-                        <span>Нет данных</span>
-                    @endif
-                </p>
-
-
-
-                <p><strong>Фильтры:</strong></p>
-                @foreach ($product->filters ?? [] as $filterId => $values)
-                    <p>
-                        <strong>{{ \App\Models\Filter::where('id', $filterId)->value('name') }}:</strong>
-                        {{ implode(', ', $values) }}
-                    </p>
-                @endforeach
-                <p><strong>Характеристики:</strong></p>
-                @foreach ($product->characteristics ?? [] as $characteristicId => $value)
-                    <p>
-                        <strong>{{ \App\Models\Characteristic::where('id', $characteristicId)->value('name') }}:</strong>
-                        {{ $value }}
-                    </p>
-                @endforeach
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Название</th>
+                        <td>{{ $product->name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Описание</th>
+                        <td>{{ $product->description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Изображение</th>
+                        <td>
+                            @if ($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="Изображение товара" style="max-width: 200px; height: auto;">
+                            @else
+                                Изображение отсутствует
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Разделы</th>
+                        <td>{{ implode(', ',\App\Models\Section::whereIn('id', $product->sections ?? [])->pluck('name')->toArray()) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Категории</th>
+                        <td>{{ implode(', ',\App\Models\Category::whereIn('id', $product->categories ?? [])->pluck('name')->toArray()) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Подкатегории</th>
+                        <td>{{ implode(', ',\App\Models\Subcategory::whereIn('id', $product->subcategories ?? [])->pluck('name')->toArray()) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Подподкатегории</th>
+                        <td>{{ implode(', ',\App\Models\Subsubcategory::whereIn('id', $product->subsubcategories ?? [])->pluck('name')->toArray()) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Бренды</th>
+                        <td>{{ implode(', ',\App\Models\Brand::whereIn('id', $product->brands ?? [])->pluck('name')->toArray()) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Линейка бренда</th>
+                        <td>
+                            @if (!empty($product->ranges) && is_array($product->ranges))
+                                {{ implode(', ', $product->ranges) }}
+                            @else
+                                Нет данных
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Фильтры</th>
+                        <td>
+                            @foreach ($product->filters ?? [] as $filterId => $values)
+                                <p><strong>{{ \App\Models\Filter::where('id', $filterId)->value('name') }}:</strong> {{ implode(', ', $values) }}</p>
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Характеристики</th>
+                        <td>
+                            @foreach ($product->characteristics ?? [] as $characteristicId => $value)
+                                <p><strong>{{ \App\Models\Characteristic::where('id', $characteristicId)->value('name') }}:</strong> {{ $value }}</p>
+                            @endforeach
+                        </td>
+                    </tr>
+                </table>
 
                 @if (Auth::check() && Auth::user()->isAdmin())
-                    <a href="{{ request()->fullUrlWithQuery(['edit' => true]) }}"
-                        class="btn btn-primary mt-3">Редактировать</a>
+                    <a href="{{ request()->fullUrlWithQuery(['edit' => true]) }}" class="btn btn-primary mt-3">Редактировать</a>
                 @endif
             </div>
         @else
@@ -141,6 +161,22 @@
                     </div>
                 </div>
 
+                <!-- Подподкатегории -->
+                <div class="form-group">
+                    <label>Подподкатегории</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (\App\Models\Subsubcategory::all() as $subsubcategory)
+                            <div class="form-check-inline">
+                                <input type="checkbox" name="subsubcategories[]" value="{{ $subsubcategory->id }}"
+                                    id="subsubcategory-{{ $subsubcategory->id }}" class="form-check-input"
+                                    {{ in_array($subsubcategory->id, $product->subsubcategories ?? []) ? 'checked' : '' }}>
+                                <label for="subsubcategory-{{ $subsubcategory->id }}"
+                                    class="form-check-label">{{ $subsubcategory->name }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
                 <!-- Бренды -->
                 <div class="form-group">
                     <label>Бренды</label>
@@ -172,8 +208,6 @@
                     </div>
                 </div>
                 
-                
-
                 <!-- Фильтры -->
                 <div class="form-group">
                     <label>Фильтры</label>
